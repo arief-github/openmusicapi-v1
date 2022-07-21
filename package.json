@@ -18,6 +18,11 @@
   },
   "homepage": "https://github.com/arief-github/openmusicapi-v1#readme",
   "dependencies": {
+    "@hapi/hapi": "^20.2.2",
+    "joi": "^17.6.0",
+    "nanoid": "^4.0.0"
+  },
+  "devDependencies": {
     "nodemon": "^2.0.19"
   }
 }

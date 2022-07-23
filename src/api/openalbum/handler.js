@@ -1,22 +1,24 @@
-const { nanoid } = require('nanoid');
-const openalbum = require('./index');
+const ClientError = require("../../exceptions/ClientError");
 
-const addAlbumHandler = (req, h) => {
-    const { name = 'untitled', year } = req.payload;
-    const id = nanoid(16);
+class AlbumsHandler {
+    constructor(service, validator) {
+        this._service = service;
+        this._validator = validator;
 
-    const newAlbumEntry = { name, year };
+        this.postAlbumHandler = this.postAlbumHandler.bind(this);
+        this.getAlbumHandler = this.getAlbumHandler.bind(this);
+    }
 
-    openalbum.push(newAlbumEntry);
+    async postAlbumHandler(req, h) {
+        const { name = 'untitled', year } = req.payload;
 
-    const isSuccess = openalbum.filter((album) => album.id === id).length > 0;
+        const albumId = await this._service.addAlbum({ name, year });
 
-    if (isSuccess) {
         const response = h.response({
             status: 'success',
-            message: 'Album berhasil ditambahkan',
+            message: 'album berhasil ditambahkan',
             data: {
-                albumId: id,
+                albumId,
             }
         })
 
@@ -24,39 +26,15 @@ const addAlbumHandler = (req, h) => {
         return response;
     }
 
-    const response = h.response({
-        status: 'fail',
-        message: 'Album gagal ditambahkan',
-    })
-
-    response.code(500);
-    return response;
-
+    async getAlbumHandler() {
+        const album = await this._service.getAlbum();
+        return {
+            status: 'success',
+            data: {
+                album
+            }
+        }
+    }
 }
 
-const getAllAlbumHandler = () => ({
-    status: 'success',
-    data: {
-        openalbum,
-    },
-})
-
-const getAlbumByIdHandler = () => {
-
-}
-
-const editAlbumByIdHandler = () => {
-
-}
-
-const deleteAlbumHandler = () => {
-
-}
-
-module.exports = {
-    addAlbumHandler,
-    getAllAlbumHandler,
-    getAlbumByIdHandler,
-    editAlbumByIdHandler,
-    deleteAlbumHandler,
-};
+module.exports = AlbumsHandler;

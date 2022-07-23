@@ -1,32 +1,32 @@
+const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
+const { openAlbumModel } = require('../../utils');
 
 class OpenAlbumService {
     constructor() {
-        this._openAlbum = [];
+        this._pool = new Pool();
     }
 
-    addAlbum({ name, year }) {
+    async addAlbum({ name, year }) {
         const id = nanoid(16);
 
-        const newAlbum = {
-            id,
-            name,
-            year,
-        };
-
-        this._openAlbum.push(newAlbum);
-
-        const isSuccess = this._openAlbum.filter((album) => album.id === id).length > 0;
-
-        if (!isSuccess) {
-            throw new Error('Catatan Gagal ditambahkan')
+        const query = {
+            text: 'INSERT INTO albums VALUES($1, $2, $3) RETURNING id',
+            values: [id, name, year],
         }
 
-        return id;
+        const result = await this._pool.query(query);
+
+        if (!result.rows[0].id) {
+            throw new Error('Album gagal ditambahkan')
+        }
+
+        return result.rows[0].id;
     }
 
-    getAlbum() {
-        return this._openAlbum;
+    async getAlbum() {
+        const result = await this._pool.query('SELECT * FROM albums');
+        return result.rows;
     }
 }
 

@@ -1,12 +1,16 @@
+require('dotenv').config();
+
 const Hapi = require('@hapi/hapi');
-const routes = require('./routes');
-const OpenAlbumService = require('./services/inMemory/OpenAlbumServices');
+const openalbums = require('./api/openalbum/');
+const OpenAlbumService = require('./services/postgres/OpenAlbumServices');
 
 
 const init = async() => {
+    const openAlbumService = new OpenAlbumService();
+
     const server = Hapi.server({
-        port: 5000,
-        host: process.env.NODE_ENV !== 'production' ? 'localhost' : '0.0.0.0',
+        port: process.env.PORT,
+        host: process.env.HOST,
         routes: {
             cors: {
                 origin: ['*'],
@@ -15,12 +19,11 @@ const init = async() => {
     });
 
     await server.register({
+        plugin: openalbums,
         options: {
-            service: OpenAlbumService,
+            service: openAlbumService,
         }
     })
-
-    server.route(routes);
 
     await server.start();
     console.log(`Server berjalan pada ${server.info.uri}`);

@@ -1,6 +1,7 @@
 const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
 const { openAlbumModel } = require('../../utils');
+const NotFoundError = require('../../exceptions/NotFoundError');
 
 class OpenAlbumService {
     constructor() {
@@ -24,9 +25,19 @@ class OpenAlbumService {
         return result.rows[0].id;
     }
 
-    async getAlbum() {
-        const result = await this._pool.query('SELECT * FROM albums');
-        return result.rows;
+    async getAlbumById( id ) {
+        const query = {
+            text: ' SELECT * FROM albums WHERE id = $1 ',
+            values: [id],
+        }
+
+        const result = await this._pool.query(query);
+
+        if(!result.rows.length) {
+            throw new NotFoundError('Album tidak ditemukan');
+        }
+
+        return result.rows.map(openAlbumModel)[0];
     }
 }
 

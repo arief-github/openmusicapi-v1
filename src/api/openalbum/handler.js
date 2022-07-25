@@ -6,7 +6,7 @@ class AlbumsHandler {
         this._validator = validator;
 
         this.postAlbumHandler = this.postAlbumHandler.bind(this);
-        this.getAlbumHandler = this.getAlbumHandler.bind(this);
+        this.getAlbumByIdHandler = this.getAlbumByIdHandler.bind(this);
     }
 
     async postAlbumHandler(req, h) {
@@ -43,16 +43,40 @@ class AlbumsHandler {
             console.error(error);
             return response;
         }
-
     }
 
-    async getAlbumHandler() {
-        const album = await this._service.getAlbum();
-        return {
-            status: 'success',
-            data: {
-                album
+    async getAlbumByIdHandler(req, h) {
+        try {
+            const { id } = req.params;
+            const album = await this._service.getAlbumById(id);
+
+            const response = h.response({
+                status: 'success',
+                data: {
+                    album,
+                },
+            });
+
+            response.code(200);
+            return response;
+
+        } catch (error) {
+            if (error instanceof ClientError) {
+                const response = h.response({
+                    status: 'fail',
+                    message: error.message,
+                });
+                response.code(error.statusCode);
+                return response;
             }
+
+            const response = h.response({
+                status: 'error',
+                message: 'Maaf, terjadi kesalahan pada server',
+            });
+            response.code(500);
+            console.log(error);
+            return response;
         }
     }
 }

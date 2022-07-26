@@ -3,7 +3,7 @@ require('dotenv').config();
 const Hapi = require('@hapi/hapi');
 const openalbums = require('./api/openalbum/');
 const OpenAlbumService = require('./services/postgres/OpenAlbumServices');
-
+const AlbumValidator = require('./validator/album');
 
 const init = async() => {
     const openAlbumService = new OpenAlbumService();
@@ -21,7 +21,8 @@ const init = async() => {
     await server.register({
         plugin: openalbums,
         options: {
-            service: openAlbumService,
+            service: OpenAlbumService,
+            validator: AlbumValidator,
         }
     })
 

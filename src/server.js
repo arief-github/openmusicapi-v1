@@ -21,7 +21,7 @@ const init = async() => {
     await server.register({
         plugin: openalbums,
         options: {
-            service: OpenAlbumService,
+            service: openAlbumService,
             validator: AlbumValidator,
         }
     })

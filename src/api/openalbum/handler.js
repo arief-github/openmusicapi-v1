@@ -34,6 +34,7 @@ class AlbumsHandler {
                     message: error.message,
                 });
                 response.code(error.statusCode);
+                console.log(error);
                 return response;
             }
 

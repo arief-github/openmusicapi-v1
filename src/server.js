@@ -6,6 +6,7 @@ const openmusics = require('./api/openmusic/');
 const OpenAlbumService = require('./services/postgres/OpenAlbumServices');
 const OpenMusicsService = require('./services/postgres/OpenMusicServices');
 const AlbumValidator = require('./validator/album');
+const SongsValidator = require('./validator/music');
 
 const init = async () => {
     const openAlbumService = new OpenAlbumService();
@@ -34,6 +35,7 @@ const init = async () => {
                 plugin: openmusics,
                 options: {
                     service: openMusicsService,
+                    validator: SongsValidator,
                 }
             }
 

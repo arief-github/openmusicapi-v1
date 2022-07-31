@@ -102,15 +102,8 @@ class SongsHandler {
         try {
             this._validator.validateSongPayload(req.payload);
             const { id } = req.params;
-            const {
-                title,
-                year,
-                genre,
-                performer,
-                duration = null,
-            } = req.payload;
 
-            await this._service.editSongById(id, { title, year, genre, performer, duration })
+            await this._service.editSongById(id, req.payload);
 
             return {
                 status: 'success',
@@ -132,6 +125,7 @@ class SongsHandler {
             message: 'Maaf, terjadi kesalahan pada server',
         });
         response.code(500);
+        console.log(error);
         return response;
     }
 

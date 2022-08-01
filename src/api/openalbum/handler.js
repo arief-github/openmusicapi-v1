@@ -30,7 +30,7 @@ class AlbumsHandler {
         } catch (error) {
             if (error instanceof ClientError) {
                 const response = h.response({
-                    status: 'error',
+                    status: 'fail',
                     message: error.message,
                 });
                 response.code(error.statusCode);
@@ -40,10 +40,10 @@ class AlbumsHandler {
 
             // Server ERROR!
             const response = h.response({
-                status: 'fail',
+                status: 'error',
                 message: 'Maaf, terjadi kegagalan pada server kami.',
             });
-            response.code(400);
+            response.code(500);
             console.error(error);
             return response;
         }
